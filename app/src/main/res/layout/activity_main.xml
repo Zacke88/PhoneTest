@@ -17,8 +17,7 @@
         android:width="200dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:height="100dp" />
-
-        int i = 6;
+        android:height="100dp"
+        android:onClick="buttonOnClick" />
 
 </RelativeLayout>
