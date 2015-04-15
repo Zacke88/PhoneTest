@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -16,13 +17,16 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
     }
 
+    MyCurrentLoctionListenerTest locationListener = new MyCurrentLoctionListenerTest();
 
-    public void buttonOnClick(View v) {
+    public void buttonOnClick2(View v) {
     // do something when the button is clicked
         Button button=(Button) v;
-        ((Button) v).setText("LOOK SHIT CHANGED");
+        ((Button) v).setText(locationListener.myLocation);
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,5 +1,6 @@
 package zacke.phonetest;
 
+import android.os.Bundle;
 import android.widget.TextView;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,3 +25,19 @@ public class MyCurrentLoctionListenerTest implements LocationListener {
         mTextView.setText("Latitude = " + location.getLatitude() + " Longitude = " + location.getLongitude());
 
     }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+}
