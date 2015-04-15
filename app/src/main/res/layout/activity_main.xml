@@ -19,4 +19,6 @@
         android:layout_centerHorizontal="true"
         android:height="100dp" />
 
+        int i = 6;
+
 </RelativeLayout>
