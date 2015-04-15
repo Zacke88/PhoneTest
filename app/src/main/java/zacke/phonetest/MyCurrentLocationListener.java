@@ -40,7 +40,8 @@ public class MyCurrentLocationListener implements LocationListener {
 
     }
 
-    public String getlocationstring (){
+    public String getls (){
+        myLocation = myLocation + " hej";
         return myLocation;
 
     }
