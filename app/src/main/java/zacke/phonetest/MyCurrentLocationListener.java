@@ -7,12 +7,12 @@ import android.location.LocationListener;
 /**
  * Created by Joakim on 2015-04-15.
  */
-public class MyCurrentLoctionListener implements LocationListener {
+public class MyCurrentLoctionListenerTest implements LocationListener {
 
     public String myLocation;
     private TextView mTextView;
 
-    MyCurrentLoctionListener(TextView tv) {
+    MyCurrentLoctionListenerTest(TextView tv) {
         this.mTextView = tv;
     }
 
