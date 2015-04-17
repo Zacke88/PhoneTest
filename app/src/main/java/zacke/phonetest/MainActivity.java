@@ -127,6 +127,7 @@ public class MainActivity extends ActionBarActivity {
                 //Lägg in close keypad
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                OKButton(input.getText().toString());
                 //d.cancel();
             }
         });
@@ -180,8 +181,6 @@ public class MainActivity extends ActionBarActivity {
 
         //String texten = " PUSHED THE BUTTON ";
         tv.setText(s);
-
-
         Log.e("Tag", "Tjennnee");
 
     }
