@@ -18,6 +18,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:height="100dp"
-        android:onClick="buttonOnClick" />
+        android:onClick="buttonOnClick"/>
+
 
 </RelativeLayout>
