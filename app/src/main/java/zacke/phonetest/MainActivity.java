@@ -68,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
 
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-      // final AlertDialog d = alert.setView(new View(this)).create();
+      // final AlertDialog ad = alert.setView(new View(this)).create();
         // (That new View is just there to have something inside the dialog that can grow big enough to cover the whole screen.)
 
 //        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -89,30 +89,11 @@ public class MainActivity extends ActionBarActivity {
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         alert.setView(input);
         input.setTextColor(Color.WHITE);
-        input.setTextSize(TypedValue.COMPLEX_UNIT_SP,160);
+        input.setTextSize(TypedValue.COMPLEX_UNIT_SP,140);
         input.setSingleLine(true);
         int maxLength = 3;
 
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-        final AlertDialog ad = alert.create();
-        input.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Toast.makeText(MainActivity.this, "Got IME Done", Toast.LENGTH_SHORT).show();
-                ad.getButton(DialogInterface.BUTTON_POSITIVE).setPressed(true);
-
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-
-                ad.dismiss();
-                return true;
-            }
-        });
 
 
 
@@ -142,6 +123,27 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        final AlertDialog ad = alert.create();
+
+        input.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+
+                    OKButton(input.getText().toString());
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                    ad.dismiss();
+
+
+
+                }
+                return false;
+            }
+        });
 
         ad.show();
 
