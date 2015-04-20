@@ -35,6 +35,7 @@ public class MainActivity extends ActionBarActivity {
     private LocationManager locationManager;
     private MyCurrentLocationListener locationListener;
     private String ls;
+    String emergencyNumber = "112";
 
 
     @Override
@@ -58,32 +59,28 @@ public class MainActivity extends ActionBarActivity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+
+        if(1 == 1) {
+
+            Log.e("tagTest", "LAST KNOWN LOCATION "+l.toString());
+
+            //throw new NonFatalError("Warning! A strange thing happened. I report this to the server but I let you continue the job...");
+        }
+
+
+
         String ls = "Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude();
+
         //ls = locationListener.getls();
 
-        Button button=(Button) v;
+
         tv.setText(ls);
         //Log.d("app", locationListener.getls());
-        ((Button) v).setText("Clicked");
+
 
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-      // final AlertDialog ad = alert.setView(new View(this)).create();
-        // (That new View is just there to have something inside the dialog that can grow big enough to cover the whole screen.)
-
-//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//        lp.copyFrom(d.getWindow().getAttributes());
-//        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-//        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-//        d.show();
-//        d.getWindow().setAttributes(lp);
-
-        alert.setTitle("Emergency number");
-
-        //alert.setMessage("Message");
-//        AlertDialog ad = alert.create();
-//        ad.setView(v,0,0,0,0);
-// Set an EditText view to get user input
+            alert.setTitle("Emergency number");
         final EditText input = new EditText(this);
         input.setId(R.id.emdialog);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -92,41 +89,48 @@ public class MainActivity extends ActionBarActivity {
         input.setTextSize(TypedValue.COMPLEX_UNIT_SP,140);
         input.setSingleLine(true);
         int maxLength = 3;
-
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
 
+        alert.setPositiveButton("Ok", null);
+        alert.setNegativeButton("Cancel", null);
+
+        final AlertDialog ad = alert.create();
+
+        ad.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button b = ad.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Do something
 
 
+                        Editable value = input.getText();
 
 
+                        OKButton(input.getText().toString());
 
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+                        //Close
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
-                Editable value = input.getText();
-                // Do something with value!
-                //Lägg in close keypad
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                OKButton(input.getText().toString());
-                //d.cancel();
+
+                        //Dismiss once everything is OK.
+                        //ad.dismiss();
+                    }
+                });
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-                //Lägg in close keypad
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                //d.cancel();
-            }
-        });
 
 
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        final AlertDialog ad = alert.create();
+
 
         input.setImeOptions(EditorInfo.IME_ACTION_DONE);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -182,8 +186,24 @@ public class MainActivity extends ActionBarActivity {
         TextView tv = (TextView)findViewById(R.id.textView2);
 
         //String texten = " PUSHED THE BUTTON ";
-        tv.setText(s);
-        Log.e("Tag", "Tjennnee");
+        //tv.setText(s);
+        //Log.e("Tag", "Tjennnee");
+        //int i = 112;
+
+        if (s.equals(emergencyNumber)) {
+            tv.setText("RÄTT " + s);
+        }
+
+        else {
+            tv.setText("FEL " + s);
+            //buttonOnClick(findViewById(R.id.button));
+        }
 
     }
+
+    public void PushCoordinate()    {
+
+
+    }
+
 }
