@@ -92,7 +92,18 @@ public class MainActivity extends ActionBarActivity {
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
 
         alert.setPositiveButton("Ok", null);
-        alert.setNegativeButton("Cancel", null);
+
+
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+            }
+        });
+
 
         final AlertDialog ad = alert.create();
 
@@ -107,20 +118,24 @@ public class MainActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View view) {
                         // TODO Do something
-
+                       boolean thebool = false;
 
                         Editable value = input.getText();
 
 
-                        OKButton(input.getText().toString());
+                        thebool = OKButton(input.getText().toString());
+                        if (thebool){
+                            //Close
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                            //Dismiss once everything is OK.
+                            ad.dismiss();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_LONG).show();
+                            input.setText("");
+                        }
 
-                        //Close
-                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-
-
-                        //Dismiss once everything is OK.
-                        //ad.dismiss();
                     }
                 });
             }
@@ -132,20 +147,35 @@ public class MainActivity extends ActionBarActivity {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
 
-        input.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        //input.setImeOptions(EditorInfo.IME_ACTION_DONE);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
 
-                    OKButton(input.getText().toString());
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                    ad.dismiss();
+                    boolean thebool = false;
+
+                    Editable value = input.getText();
+
+
+                    thebool = OKButton(input.getText().toString());
+                    if (thebool){
+                        //Close
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                        //Dismiss once everything is OK.
+                        ad.dismiss();
+                    }
+                    else{
+
+                        Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_SHORT).show();
+                        input.setText("");
+
+                    }
 
 
 
                 }
-                return false;
+                return true;
             }
         });
 
@@ -181,24 +211,15 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void OKButton(String s)  {
+    public boolean OKButton(String s)  {
 
+        boolean thebool = false;
         TextView tv = (TextView)findViewById(R.id.textView2);
-
-        //String texten = " PUSHED THE BUTTON ";
-        //tv.setText(s);
-        //Log.e("Tag", "Tjennnee");
-        //int i = 112;
-
-        if (s.equals(emergencyNumber)) {
-            tv.setText("RÄTT " + s);
+        if(s.equals("112"))
+        {
+            thebool= true;
         }
-
-        else {
-            tv.setText("FEL " + s);
-            //buttonOnClick(findViewById(R.id.button));
-        }
-
+        return thebool;
     }
 
     public void PushCoordinate()    {
