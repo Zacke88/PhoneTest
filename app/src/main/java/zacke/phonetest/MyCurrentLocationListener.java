@@ -14,7 +14,7 @@ public class MyCurrentLocationListener implements LocationListener {
 
     private String myLocation;
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location) throws NullPointerException{
         location.getLatitude();
         location.getLongitude();
 

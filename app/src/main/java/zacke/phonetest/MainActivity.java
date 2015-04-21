@@ -1,13 +1,9 @@
 package zacke.phonetest;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
@@ -15,13 +11,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -53,137 +47,20 @@ public class MainActivity extends ActionBarActivity {
     public void buttonOnClick(View v) {
     // do something when the button is clicked
 
-        TextView tv = (TextView)findViewById(R.id.textView);
+        TextView tv2 = (TextView)findViewById(R.id.textView2);
 
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-
-        if(1 == 1) {
-
-            Log.e("tagTest", "LAST KNOWN LOCATION "+l.toString());
-
-            //throw new NonFatalError("Warning! A strange thing happened. I report this to the server but I let you continue the job...");
+        try {
+            Location l = getCords();
+            tv2.setText("Your location is: \n" +
+                    " Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude());
+        }catch (NullPointerException e){
+            tv2.setText("Location lookup failed");
+            Toast.makeText(getApplicationContext(), "Could not determinate location. Check GPS ", Toast.LENGTH_LONG).show();
         }
 
 
-
-        String ls = "Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude();
-
-        //ls = locationListener.getls();
-
-
-        tv.setText(ls);
-        //Log.d("app", locationListener.getls());
-
-
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-            alert.setTitle("Emergency number");
-        final EditText input = new EditText(this);
-        input.setId(R.id.emdialog);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        alert.setView(input);
-        input.setTextColor(Color.WHITE);
-        input.setTextSize(TypedValue.COMPLEX_UNIT_SP,140);
-        input.setSingleLine(true);
-        int maxLength = 3;
-        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
-
-        alert.setPositiveButton("Ok", null);
-
-
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-            }
-        });
-
-
-        final AlertDialog ad = alert.create();
-
-        ad.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(DialogInterface dialog) {
-
-                Button b = ad.getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        // TODO Do something
-                       boolean thebool = false;
-
-                        Editable value = input.getText();
-
-
-                        thebool = OKButton(input.getText().toString());
-                        if (thebool){
-                            //Close
-                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                            //Dismiss once everything is OK.
-                            ad.dismiss();
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_LONG).show();
-                            input.setText("");
-                        }
-
-                    }
-                });
-            }
-        });
-
-
-
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-
-        //input.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-
-                    boolean thebool = false;
-
-                    Editable value = input.getText();
-
-
-                    thebool = OKButton(input.getText().toString());
-                    if (thebool){
-                        //Close
-                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                        //Dismiss once everything is OK.
-                        ad.dismiss();
-                    }
-                    else{
-
-                        Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_SHORT).show();
-                        input.setText("");
-
-                    }
-
-
-
-                }
-                return true;
-            }
-        });
-
-        ad.show();
-
-
-
-
+        AlertDialog ad = createAlert(v);
+        showAlert(ad);
 
     }
 
@@ -213,18 +90,118 @@ public class MainActivity extends ActionBarActivity {
 
     public boolean OKButton(String s)  {
 
-        boolean thebool = false;
-        TextView tv = (TextView)findViewById(R.id.textView2);
-        if(s.equals("112"))
+        boolean theBool = false;
+        if(s.equals(emergencyNumber))
         {
-            thebool= true;
+            theBool= true;
         }
-        return thebool;
+        return theBool;
     }
 
     public void PushCoordinate()    {
 
 
+    }
+
+    public Location getCords() throws NullPointerException{
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        return l;
+    }
+
+    public AlertDialog createAlert(View v){
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this,android.R.style.Theme_Black);
+        final EditText input = new EditText(this);
+        alert.setTitle("Emergency number");
+        input.setId(R.id.emdialog);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        alert.setView(input);
+        input.setTextColor(Color.WHITE);
+        input.setTextSize(TypedValue.COMPLEX_UNIT_SP,140);
+        input.setSingleLine(true);
+        int maxLength = 3;
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+
+        alert.setPositiveButton("Ok", null);
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+            }
+        });
+
+        final AlertDialog ad = alert.create();
+
+        ad.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button b = ad.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+
+                        boolean theBool = false;
+                        Editable value = input.getText();
+                        theBool = OKButton(input.getText().toString());
+
+                        if (theBool){
+                            //Close
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                            //Dismiss once everything is OK.
+                            ad.dismiss();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_LONG).show();
+                            input.setText("");
+                        }
+                    }
+                });
+            }
+        });
+
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+
+                    boolean theBool = false;
+                    Editable value = input.getText();
+
+                    theBool = OKButton(input.getText().toString());
+                    if (theBool){
+                        //Close
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                        //Dismiss once everything is OK.
+                        ad.dismiss();
+                    }
+                    else{
+
+                        Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_SHORT).show();
+                        input.setText("");
+
+                    }
+                }
+                return true;
+            }
+        });
+
+        return ad;
+    }
+
+    public void showAlert(AlertDialog ad){
+
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        ad.show();
     }
 
 }

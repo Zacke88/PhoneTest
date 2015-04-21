@@ -7,29 +7,35 @@
     android:descendantFocusability="afterDescendants"
     >
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+    <TextView android:text="@string/emtext"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
+        android:id="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        style="@style/EmergencyText" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button1"
-        android:id="@+id/button"
-        android:width="200dp"
+        android:id="@+id/button1"
+        android:width="400sp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:height="100dp"
-        android:onClick="buttonOnClick"/>
+        android:height="175sp"
+        android:onClick="buttonOnClick"
+        android:clickable="true"
+        android:background="@drawable/redbutton"
+        style="@style/ButtonText"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textView2"
-        android:layout_below="@+id/button"
-        android:layout_centerHorizontal="true" />
-
+        android:layout_below="@+id/button1"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="40sp" />
 
 
 </RelativeLayout>
