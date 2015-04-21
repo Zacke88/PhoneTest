@@ -3,9 +3,11 @@ package zacke.phonetest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,6 +24,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -44,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void buttonOnClick(View v) {
+    public void embuttonOnClick(View v) {
     // do something when the button is clicked
 
         TextView tv2 = (TextView)findViewById(R.id.textView2);
@@ -58,13 +62,28 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(getApplicationContext(), "Could not determinate location. Check GPS ", Toast.LENGTH_LONG).show();
         }
 
-
         AlertDialog ad = createAlert(v);
         showAlert(ad);
 
     }
 
+    public void mapbuttonOnClick(View v) {
+        Toast.makeText(getApplicationContext(), "This is where a map is shown with your location on it", Toast.LENGTH_LONG).show();
+        Location l = getCords();
+        double latitude = l.getLatitude();
+        double longitude = l.getLongitude();
 
+        /*String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        startActivity(intent);*/
+
+        Intent i = new Intent(MainActivity.this, MapsActivity.class);
+        Bundle b = new Bundle();
+        b.putDouble("Longitude", getCords().getLongitude());
+        b.putDouble("Latitude", getCords().getLatitude());
+        i.putExtras(b);
+        startActivity(i);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,6 +176,13 @@ public class MainActivity extends ActionBarActivity {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                             //Dismiss once everything is OK.
+
+                            Button b = (Button)findViewById(R.id.embutton);
+                            b.setBackgroundResource(R.drawable.greenbutton);
+                            if(getCords() != null){
+                                Button mapbutton = (Button) findViewById(R.id.mapbutton);
+                                mapbutton.setVisibility(View.VISIBLE);
+                            }
                             ad.dismiss();
                         }
                         else{
@@ -181,6 +207,13 @@ public class MainActivity extends ActionBarActivity {
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                         //Dismiss once everything is OK.
+
+                        Button b = (Button)findViewById(R.id.embutton);
+                        b.setBackgroundResource(R.drawable.greenbutton);
+                        if(getCords() != null){
+                            Button mapbutton = (Button) findViewById(R.id.mapbutton);
+                            mapbutton.setVisibility(View.VISIBLE);
+                        }
                         ad.dismiss();
                     }
                     else{

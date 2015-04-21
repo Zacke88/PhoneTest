@@ -18,24 +18,38 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button1"
-        android:id="@+id/button1"
+        android:text="@string/embutton"
+        android:id="@+id/embutton"
         android:width="400sp"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:height="175sp"
-        android:onClick="buttonOnClick"
+        android:onClick="embuttonOnClick"
         android:clickable="true"
         android:background="@drawable/redbutton"
-        style="@style/ButtonText"/>
+        style="@style/emButton"
+        android:layout_below="@+id/textView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView2"
-        android:layout_below="@+id/button1"
+        android:layout_below="@+id/embutton"
         android:layout_centerHorizontal="true"
-        android:paddingTop="40sp" />
+        android:paddingTop="40sp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mapbutton"
+        android:id="@+id/mapbutton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        style="@style/mapButton"
+        android:visibility="gone"
+        android:onClick="mapbuttonOnClick"
+        android:background="@drawable/bluebutton" />
 
 
 </RelativeLayout>
