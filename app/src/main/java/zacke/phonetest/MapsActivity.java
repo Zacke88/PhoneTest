@@ -96,7 +96,7 @@ public class MapsActivity extends FragmentActivity {
         /*// Get latitude of the current location
         double latitude = myLocation.getLatitude();
 
-        // Get longitude of the current location
+        // Get longitude of the current location 
         double longitude = myLocation.getLongitude();
 */
 
