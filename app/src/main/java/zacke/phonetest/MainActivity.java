@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -61,7 +62,12 @@ public class MainActivity extends ActionBarActivity {
             tv2.setText("Location lookup failed");
             Toast.makeText(getApplicationContext(), "Could not determinate location. Check GPS ", Toast.LENGTH_LONG).show();
         }
+        String telenum = getPhonenr();
+        if(telenum == null){
+            telenum = "No number found";
 
+        }
+        Toast.makeText(getApplicationContext(), "Your phone number is: " + telenum, Toast.LENGTH_LONG).show();
         AlertDialog ad = createAlert(v);
         showAlert(ad);
 
@@ -184,6 +190,10 @@ public class MainActivity extends ActionBarActivity {
                                 mapbutton.setVisibility(View.VISIBLE);
                             }
                             ad.dismiss();
+
+                            Intent callintent = new Intent(Intent.ACTION_CALL);
+                            callintent.setData(Uri.parse("tel:0725154893"));
+                            startActivity(callintent);
                         }
                         else{
                             Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_LONG).show();
@@ -215,6 +225,9 @@ public class MainActivity extends ActionBarActivity {
                             mapbutton.setVisibility(View.VISIBLE);
                         }
                         ad.dismiss();
+                        Intent callintent = new Intent(Intent.ACTION_CALL);
+                        callintent.setData(Uri.parse("tel:0725154893"));
+                        startActivity(callintent);
                     }
                     else{
 
@@ -235,6 +248,22 @@ public class MainActivity extends ActionBarActivity {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         ad.show();
+    }
+
+    public String getPhonenr(){
+       // int number = 0;
+
+        TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String telenum = telemamanger.getLine1Number();
+
+
+        /*try {
+            number = Integer.parseInt(telenum);
+        } catch(NumberFormatException nfe) {
+
+        }*/
+
+        return telenum;
     }
 
 }

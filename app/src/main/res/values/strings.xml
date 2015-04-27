@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PhoneTest</string>
+    <string name="app_name">Emergency</string>
 
     <string name="emtext">Press the emergency button to call SOS and send them your location</string>
     <string name="action_settings">Settings</string>
