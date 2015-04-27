@@ -50,6 +50,6 @@
         android:visibility="gone"
         android:onClick="mapbuttonOnClick"
         android:background="@drawable/bluebutton" />
-
+ 
 
 </RelativeLayout>
