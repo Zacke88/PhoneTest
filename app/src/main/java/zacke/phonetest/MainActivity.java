@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -18,7 +20,9 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -26,7 +30,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -34,7 +38,13 @@ public class MainActivity extends ActionBarActivity {
     private LocationManager locationManager;
     private MyCurrentLocationListener locationListener;
     private String ls;
-    String emergencyNumber = "112";
+    private String emergencyNumber = "112";
+    private CountDownTimer countDownTimer;
+    private TextView tv2;
+    private TextView tv3;
+    private boolean timerStarted = false;
+    private String telenum;
+    private boolean hasStoredVar;
 
 
     @Override
@@ -46,13 +56,157 @@ public class MainActivity extends ActionBarActivity {
 
         locationListener = new MyCurrentLocationListener();
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
+        String mString = mPrefs.getString("telenum", "null");
+        hasStoredVar = lookUpStoredVar(mString);
+        System.out.println("mString is: " + mString);
+
+        if(hasStoredVar == false) {
+            telenum = getPhonenr();
+            if (telenum == null) {
+                telenum = "Could not find phone number, you can input it in settings";
+            } else {
+                Toast.makeText(getApplicationContext(), "Your phone number is: " + telenum, Toast.LENGTH_LONG).show();
+                SharedPreferences.Editor mEditor = mPrefs.edit();
+                mEditor.putString("telenum", telenum).commit();
+            }
+        }
+        else{
+            telenum = mString;
+        }
+
     }
+
+    public boolean lookUpStoredVar(String m){
+        boolean hasVar = false;
+
+        if(m != null){
+            hasVar = true;
+        }
+
+        return hasVar;
+    }
+
+    public void enterPhonenr(){
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+
+
+        if(telenum == null){
+            final String maintext = new String("Current number is: (Could not find number)");
+            alert.setMessage(maintext);
+        }
+        else{
+            final String maintext = new String("Current number is: " + telenum);
+            alert.setMessage(maintext);
+        }
+        alert.setTitle("Enter 10 digits phone number");
+        input.setId(R.id.phonenrdialog);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        alert.setView(input);
+        input.setTextColor(Color.BLACK);
+        input.setTextSize(TypedValue.COMPLEX_UNIT_SP,80);
+        input.setSingleLine(true);
+        int maxLength = 10;
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+
+
+        alert.setPositiveButton("Ok", null);
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+            }
+        });
+
+        final AlertDialog ad = alert.create();
+        ad.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button b = ad.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+
+                        boolean theBool = false;
+                        theBool = input.getText().toString().length() == 10;
+                        if (theBool){
+                            telenum = input.getText().toString();
+                            System.out.println("telenum after input is: " + telenum);
+                            SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor mEditor = mPrefs.edit();
+                            mEditor.putString("telenum", telenum).commit();
+                            //Close
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                            //Dismiss once everything is OK.
+                            ad.dismiss();
+                        }
+                        else{
+
+                            Toast.makeText(getApplicationContext(), "You didn't enter a 10 digits number", Toast.LENGTH_SHORT).show();
+                            input.setText("");
+
+                        }
+                    }
+                });
+            }
+        });
+
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+
+                    boolean theBool = false;
+                    Editable value = input.getText();
+
+                    theBool = input.getText().toString().length() == 10;
+                    if (theBool){
+                        telenum = input.getText().toString();
+                        System.out.println("telenum after input is: " + telenum);
+                        SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor mEditor = mPrefs.edit();
+                        mEditor.putString("telenum", telenum).commit();
+                        //Close
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                        //Dismiss once everything is OK.
+                        ad.dismiss();
+                    }
+                    else{
+
+                        Toast.makeText(getApplicationContext(), "You didn't enter a 10 digits number", Toast.LENGTH_SHORT).show();
+                        input.setText("");
+
+                    }
+                }
+                return true;
+            }
+        });
+
+        ad.show();
+        input.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+
+
+    }
+
 
 
     public void embuttonOnClick(View v) {
     // do something when the button is clicked
 
-        TextView tv2 = (TextView)findViewById(R.id.textView2);
+        tv2 = (TextView)findViewById(R.id.textView2);
+        tv3 = (TextView)findViewById(R.id.textView3);
 
         try {
             Location l = getCords();
@@ -60,16 +214,19 @@ public class MainActivity extends ActionBarActivity {
                     " Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude());
         }catch (NullPointerException e){
             tv2.setText("Location lookup failed");
-            Toast.makeText(getApplicationContext(), "Could not determinate location. Check GPS ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Could not determinate location", Toast.LENGTH_LONG).show();
         }
-        String telenum = getPhonenr();
-        if(telenum == null){
-            telenum = "No number found";
 
-        }
-        Toast.makeText(getApplicationContext(), "Your phone number is: " + telenum, Toast.LENGTH_LONG).show();
         AlertDialog ad = createAlert(v);
         showAlert(ad);
+
+        if(timerStarted == false) {
+
+            tv3.setVisibility(View.VISIBLE);
+            final CounterClass timer = new CounterClass(2400000, 1000);
+            timer.start();
+            timerStarted = true;
+        }
 
     }
 
@@ -104,13 +261,14 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        switch (id) {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.action_settings:
+                enterPhonenr();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public boolean OKButton(String s)  {
@@ -121,11 +279,6 @@ public class MainActivity extends ActionBarActivity {
             theBool= true;
         }
         return theBool;
-    }
-
-    public void PushCoordinate()    {
-
-
     }
 
     public Location getCords() throws NullPointerException{
@@ -150,8 +303,8 @@ public class MainActivity extends ActionBarActivity {
         int maxLength = 3;
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
 
-        alert.setPositiveButton("Ok", null);
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("Ok", null);
+        alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -167,7 +320,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onShow(DialogInterface dialog) {
 
-                Button b = ad.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button b = ad.getButton(AlertDialog.BUTTON_NEGATIVE);
                 b.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -251,19 +404,37 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public String getPhonenr(){
-       // int number = 0;
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String telenum = telemamanger.getLine1Number();
-
-
-        /*try {
-            number = Integer.parseInt(telenum);
-        } catch(NumberFormatException nfe) {
-
-        }*/
-
         return telenum;
     }
 
+    public class CounterClass extends CountDownTimer {
+
+        public CounterClass(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            // TODO Auto-generated constructor stub
+        }
+        @Override
+        public void onTick(long millisUntilFinished) {
+            // TODO Auto-generated method stub
+
+
+            tv3 = (TextView)findViewById(R.id.textView3);
+            long millis = millisUntilFinished;
+            String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+                    TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+            tv3.setText("ETA: " + hms);
+            System.out.println(hms);
+        }
+
+        @Override
+        public void onFinish() {
+            // TODO Auto-generated method stub
+            tv3.setText("");
+            tv3.setText("Completed");
+        }
+    }
 }

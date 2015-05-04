@@ -2,10 +2,11 @@
     <string name="app_name">Emergency</string>
 
     <string name="emtext">Press the emergency button to call SOS and send them your location</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Set phone number</string>
     <string name="embutton">Emergency</string>
     <string name="mapbutton">Show sent position on map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="timer"></string>
 
 
 
