@@ -45,6 +45,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean timerStarted = false;
     private String telenum;
     private boolean hasStoredVar;
+    private boolean hasNum = false;
 
 
     @Override
@@ -59,20 +60,20 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
         String mString = mPrefs.getString("telenum", "null");
         hasStoredVar = lookUpStoredVar(mString);
-        System.out.println("mString is: " + mString);
 
-        if(hasStoredVar == false) {
+        if(!getPhonenr().equals(null) ){
             telenum = getPhonenr();
-            if (telenum == null) {
-                telenum = "Could not find phone number, you can input it in settings";
-            } else {
-                Toast.makeText(getApplicationContext(), "Your phone number is: " + telenum, Toast.LENGTH_LONG).show();
-                SharedPreferences.Editor mEditor = mPrefs.edit();
-                mEditor.putString("telenum", telenum).commit();
-            }
+            hasNum = true;
         }
         else{
-            telenum = mString;
+            if(hasStoredVar == false)
+            {
+                Toast.makeText(getApplicationContext(), "Could not find phone number, you can input it in settings", Toast.LENGTH_LONG).show();
+            }
+            else{
+                telenum = mString;
+            }
+
         }
 
     }
@@ -137,20 +138,22 @@ public class MainActivity extends ActionBarActivity {
 
                         boolean theBool = false;
                         theBool = input.getText().toString().length() == 10;
-                        if (theBool){
-                            telenum = input.getText().toString();
-                            System.out.println("telenum after input is: " + telenum);
-                            SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor mEditor = mPrefs.edit();
-                            mEditor.putString("telenum", telenum).commit();
+                        if (theBool) {
+                            if (hasNum == false) {
+                                telenum = input.getText().toString();
+                                SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor mEditor = mPrefs.edit();
+                                mEditor.putString("telenum", telenum).commit();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Phone number could be determined automatically. You can't manually input it.", Toast.LENGTH_SHORT).show();
+                            }
                             //Close
-                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                             //Dismiss once everything is OK.
                             ad.dismiss();
-                        }
-                        else{
-
+                        } else {
                             Toast.makeText(getApplicationContext(), "You didn't enter a 10 digits number", Toast.LENGTH_SHORT).show();
                             input.setText("");
 
@@ -169,11 +172,15 @@ public class MainActivity extends ActionBarActivity {
 
                     theBool = input.getText().toString().length() == 10;
                     if (theBool){
-                        telenum = input.getText().toString();
-                        System.out.println("telenum after input is: " + telenum);
-                        SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor mEditor = mPrefs.edit();
-                        mEditor.putString("telenum", telenum).commit();
+                        if (hasNum == false) {
+                            telenum = input.getText().toString();
+                            SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor mEditor = mPrefs.edit();
+                            mEditor.putString("telenum", telenum).commit();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Phone number could be determined automatically. You can't manually input it.", Toast.LENGTH_SHORT).show();
+                        }
                         //Close
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
@@ -308,7 +315,7 @@ public class MainActivity extends ActionBarActivity {
 
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
             }
         });
