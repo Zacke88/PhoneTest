@@ -16,14 +16,11 @@ import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -51,8 +48,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
     public void processFinish(String output){
         //this you will received result fired from async class of onPostExecute(result) method.
         tv2 = (TextView)findViewById(R.id.textView2);
-        tv2.setText(output);
-
+        if(output != null) {
+            tv2.setText(output);
+        }
     }
 
     @Override
@@ -68,17 +66,17 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         String mString = mPrefs.getString("telenum", "null");
         hasStoredVar = lookUpStoredVar(mString);
 
-///////
-        try {
+
+      /*  try {
             HttpConnect test = new HttpConnect();
             test.listener = this;
             test.execute();
         } catch(Exception e) {
             Log.e("TAG",Log.getStackTraceString(e));
             tv2.setText("Le fail1");
-        }
+        }*/
 
-//////////
+
         if(!getPhonenr().equals(null) ){
             telenum = getPhonenr();
             hasNum = true;
@@ -231,32 +229,20 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             tv2.setText("Your location is: \n" +
                     " Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude());
         }catch (NullPointerException e){
-            tv2.setText("Location lookup failed");
             Toast.makeText(getApplicationContext(), "Could not determinate location", Toast.LENGTH_LONG).show();
         }
 
         AlertDialog ad = createAlert(v);
         showAlert(ad);
 
-        if(timerStarted == false) {
 
-            tv3.setVisibility(View.VISIBLE);
-            final CounterClass timer = new CounterClass(2400000, 1000);
-            timer.start();
-            timerStarted = true;
-        }
 
     }
 
     public void mapbuttonOnClick(View v) {
-        Toast.makeText(getApplicationContext(), "This is where a map is shown with your location on it", Toast.LENGTH_LONG).show();
         Location l = getCords();
         double latitude = l.getLatitude();
         double longitude = l.getLongitude();
-
-        /*String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(intent);*/
 
         Intent i = new Intent(MainActivity.this, MapsActivity.class);
         Bundle b = new Bundle();
@@ -286,8 +272,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                     enterPhonenr();
                 }
                 else{
-                Toast.makeText(getApplicationContext(), "Phone number could be determined automatically. You can't manually input it.", Toast.LENGTH_SHORT).show();
-            }
+                    Toast.makeText(getApplicationContext(), "Your number could be determined automatically, it's not possible to set it", Toast.LENGTH_LONG).show();
+
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -365,14 +352,29 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                                 Button mapbutton = (Button) findViewById(R.id.mapbutton);
                                 mapbutton.setVisibility(View.VISIBLE);
                             }
+                            else{
+                                tv2.setText("Location could not be determined, location have not been sent to emergencycentral");
+                            }
                             ad.dismiss();
 
                             Intent callintent = new Intent(Intent.ACTION_CALL);
                             callintent.setData(Uri.parse("tel:0725154893"));
                             startActivity(callintent);
+                            try {
+                                Thread.sleep(20000);
+                                if(timerStarted == false) {
+
+                                    tv3.setVisibility(View.VISIBLE);
+                                    final CounterClass timer = new CounterClass(1200000, 1000);
+                                    timer.start();
+                                    timerStarted = true;
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                         else{
-                            Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "You must enter 112", Toast.LENGTH_LONG).show();
                             input.setText("");
                         }
                     }
@@ -400,14 +402,30 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                             Button mapbutton = (Button) findViewById(R.id.mapbutton);
                             mapbutton.setVisibility(View.VISIBLE);
                         }
+                        else{
+                            tv2.setText("Location could not be determined, location have not been sent to emergencycentral");
+                        }
                         ad.dismiss();
                         Intent callintent = new Intent(Intent.ACTION_CALL);
                         callintent.setData(Uri.parse("tel:0725154893"));
                         startActivity(callintent);
+                        try {
+                            Thread.sleep(20000);
+                            if(timerStarted == false) {
+
+                                tv3.setVisibility(View.VISIBLE);
+                                final CounterClass timer = new CounterClass(1200000, 1000);
+                                timer.start();
+                                timerStarted = true;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                     else{
 
-                        Toast.makeText(getApplicationContext(), "You entered wrong number", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "You must enter 112", Toast.LENGTH_SHORT).show();
                         input.setText("");
 
                     }
@@ -450,7 +468,6 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                     TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                     TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
             tv3.setText("ETA: " + hms);
-            System.out.println(hms);
         }
 
         @Override
