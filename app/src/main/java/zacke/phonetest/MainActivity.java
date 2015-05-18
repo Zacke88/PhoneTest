@@ -75,7 +75,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             Log.e("TAG",Log.getStackTraceString(e));
             tv2.setText("Le fail1");
         }*/
- 
+
 
         if(!getPhonenr().equals(null) ){
             telenum = getPhonenr();
@@ -226,8 +226,8 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         try {
             Location l = getCords();
-            tv2.setText("Your location is: \n" +
-                    " Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude());
+//            tv2.setText("Your location is: \n" +
+//                    " Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude());
         }catch (NullPointerException e){
             Toast.makeText(getApplicationContext(), "Could not determinate location", Toast.LENGTH_LONG).show();
         }
