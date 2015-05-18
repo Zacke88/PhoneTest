@@ -75,7 +75,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             Log.e("TAG",Log.getStackTraceString(e));
             tv2.setText("Le fail1");
         }*/
-
+ 
 
         if(!getPhonenr().equals(null) ){
             telenum = getPhonenr();
