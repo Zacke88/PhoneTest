@@ -23,6 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -65,17 +67,6 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
         String mString = mPrefs.getString("telenum", "null");
         hasStoredVar = lookUpStoredVar(mString);
-
-
-      /*  try {
-            HttpConnect test = new HttpConnect();
-            test.listener = this;
-            test.execute();
-        } catch(Exception e) {
-            Log.e("TAG",Log.getStackTraceString(e));
-            tv2.setText("Le fail1");
-        }*/
-
 
         if(!getPhonenr().equals(null) ){
             telenum = getPhonenr();
@@ -341,13 +332,14 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                         theBool = OKButton(input.getText().toString());
 
                         if (theBool){
+                            Button b = (Button)findViewById(R.id.embutton);
+                            b.setBackgroundResource(R.drawable.greenbutton);
                             //Close
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                             //Dismiss once everything is OK.
 
-                            Button b = (Button)findViewById(R.id.embutton);
-                            b.setBackgroundResource(R.drawable.greenbutton);
+
                             if(getCords() != null){
                                 Button mapbutton = (Button) findViewById(R.id.mapbutton);
                                 mapbutton.setVisibility(View.VISIBLE);
@@ -357,21 +349,8 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                             }
                             ad.dismiss();
 
-                            Intent callintent = new Intent(Intent.ACTION_CALL);
-                            callintent.setData(Uri.parse("tel:0725154893"));
-                            startActivity(callintent);
-                            try {
-                                Thread.sleep(20000);
-                                if(timerStarted == false) {
+                            doEm();
 
-                                    tv3.setVisibility(View.VISIBLE);
-                                    final CounterClass timer = new CounterClass(1200000, 1000);
-                                    timer.start();
-                                    timerStarted = true;
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                         }
                         else{
                             Toast.makeText(getApplicationContext(), "You must enter 112", Toast.LENGTH_LONG).show();
@@ -391,13 +370,14 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
                     theBool = OKButton(input.getText().toString());
                     if (theBool){
+                        Button b = (Button)findViewById(R.id.embutton);
+                        b.setBackgroundResource(R.drawable.greenbutton);
                         //Close
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                         //Dismiss once everything is OK.
 
-                        Button b = (Button)findViewById(R.id.embutton);
-                        b.setBackgroundResource(R.drawable.greenbutton);
+
                         if(getCords() != null){
                             Button mapbutton = (Button) findViewById(R.id.mapbutton);
                             mapbutton.setVisibility(View.VISIBLE);
@@ -406,21 +386,8 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                             tv2.setText("Location could not be determined, location have not been sent to emergencycentral");
                         }
                         ad.dismiss();
-                        Intent callintent = new Intent(Intent.ACTION_CALL);
-                        callintent.setData(Uri.parse("tel:0725154893"));
-                        startActivity(callintent);
-                        try {
-                            Thread.sleep(20000);
-                            if(timerStarted == false) {
 
-                                tv3.setVisibility(View.VISIBLE);
-                                final CounterClass timer = new CounterClass(1200000, 1000);
-                                timer.start();
-                                timerStarted = true;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        doEm();
 
                     }
                     else{
@@ -444,11 +411,67 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         ad.show();
     }
 
+    public void doEm(){
+
+        Intent callintent = new Intent(Intent.ACTION_CALL);
+        callintent.setData(Uri.parse("tel:0725154893"));
+        startActivity(callintent);
+
+            if(timerStarted == false) {
+
+                tv3.setVisibility(View.VISIBLE);
+                final CounterClass timer = new CounterClass(1200000, 1000);
+                timer.start();
+                timerStarted = true;
+            }
+            loadURL();
+
+    }
+
     public String getPhonenr(){
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String telenum = telemamanger.getLine1Number();
+        if(telenum.contains("+")){
+            telenum.replace("+","00");
+        }
         return telenum;
+    }
+
+    public void loadURL()   {
+
+        Location locat = getCords();
+
+        WebView webview = new WebView(MainActivity.this);
+        webview.loadUrl("http://gg.gustav-nordlander.se/?coord="+telenum+";" +
+                Double.toString(locat.getLongitude())+", "+Double.toString(locat.getLatitude()));
+
+        webview.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return false;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+            }
+        });
+
+    }
+
+    public void sendHttp(){
+
+        try {
+            Location ls = getCords();
+            String cords = ls.getLongitude() + ",%20" + ls.getLatitude();
+            HttpConnect test = new HttpConnect();
+            test.listener = this;
+            test.execute(cords,telenum);
+        } catch(Exception e) {
+            tv2.setText("Le fail1");
+        }
     }
 
     public class CounterClass extends CountDownTimer {
