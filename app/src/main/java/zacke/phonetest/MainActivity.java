@@ -29,7 +29,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.concurrent.TimeUnit;
 
 
@@ -416,15 +415,32 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         Intent callintent = new Intent(Intent.ACTION_CALL);
         callintent.setData(Uri.parse("tel:0725154893"));
         startActivity(callintent);
+        loadURL();
+        Boolean stop = false;
+        String stopstring = null;
+        while(stop == false){
 
+            if(stopstring.equals("time")){
+                stop = true;
+            }
+            stopstring = getHttp();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        String time = stopstring.split(";")[1];
+        int timeInt = Integer.parseInt(time);
             if(timerStarted == false) {
 
                 tv3.setVisibility(View.VISIBLE);
-                final CounterClass timer = new CounterClass(1200000, 1000);
+                //final CounterClass timer = new CounterClass(1200000, 1000);
+                final CounterClass timer = new CounterClass(timeInt, 1000);
                 timer.start();
                 timerStarted = true;
             }
-            loadURL();
+
 
     }
 
@@ -443,7 +459,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         Location locat = getCords();
 
         WebView webview = new WebView(MainActivity.this);
-        webview.loadUrl("http://gg.gustav-nordlander.se/?coord="+telenum+";" +
+        webview.loadUrl("http://gg.gustav-nordlander.se/?coord=coord;"+telenum+";" +
                 Double.toString(locat.getLongitude())+", "+Double.toString(locat.getLatitude()));
 
         webview.setWebViewClient(new WebViewClient() {
@@ -461,17 +477,20 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     }
 
-    public void sendHttp(){
+    public String getHttp(){
 
+        String httpstring = null;
         try {
             Location ls = getCords();
             String cords = ls.getLongitude() + ",%20" + ls.getLatitude();
             HttpConnect test = new HttpConnect();
             test.listener = this;
             test.execute(cords,telenum);
+            test.listener.processFinish(httpstring);
         } catch(Exception e) {
             tv2.setText("Le fail1");
         }
+        return httpstring;
     }
 
     public class CounterClass extends CountDownTimer {

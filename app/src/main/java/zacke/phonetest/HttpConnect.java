@@ -50,9 +50,10 @@ public class HttpConnect extends AsyncTask<String, String, String>{
             DefaultHttpClient httpClient;
             HttpGet httpget;
             httpClient = new DefaultHttpClient();
-            //String restUrl = URLEncoder.encode("http://gg.gustav-nordlander.se:/?coord=" + cords + ";" + phoneNr, "UTF-8");
+            //String restUrl = URLEncoder.encode("http://gg.gustav-nordlander.se/?coord=" + cords + ";" + phoneNr, "UTF-8");
             //httpget = new HttpGet(restUrl);
-            httpget = new HttpGet("http://gg.gustav-nordlander.se:/?coord=" + cords + ";" + phoneNr);
+            //httpget = new HttpGet("http://gg.gustav-nordlander.se/?coord=" + cords + ";" + phoneNr);
+            httpget = new HttpGet("http://gg.gustav-nordlander.se");
             HttpResponse httpResponse = httpClient.execute(httpget);
 
             in = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
