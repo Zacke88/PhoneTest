@@ -83,6 +83,7 @@ public class HttpGetThread extends Activity implements Runnable {
         @Override
         public void onFinish() {
             // TODO Auto-generated method stub
+            tv3.setText("Ambulance should arrive shortly");
         }
     }
 

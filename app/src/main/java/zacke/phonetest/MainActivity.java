@@ -431,11 +431,12 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public void doEm() throws IOException {
 
+        tv3.setText("Waiting for ETA");
         Intent callintent = new Intent(Intent.ACTION_CALL);
         callintent.setData(Uri.parse("tel:0725154893"));
         startActivity(callintent);
         loadURL();
-        tv3.setText("Waiting for ETA");
+
 
         HttpGetThread Httpgetter = new HttpGetThread(this);
         Thread theThread = new Thread(Httpgetter);
