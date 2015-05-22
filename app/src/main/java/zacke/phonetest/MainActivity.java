@@ -29,6 +29,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.api.client.util.IOUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
 
@@ -348,7 +357,11 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                             }
                             ad.dismiss();
 
-                            doEm();
+                            try {
+                                doEm();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
                         }
                         else{
@@ -386,7 +399,11 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                         }
                         ad.dismiss();
 
-                        doEm();
+                        try {
+                            doEm();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                     else{
@@ -410,28 +427,33 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         ad.show();
     }
 
-    public void doEm(){
+    public void doEm() throws IOException {
 
         Intent callintent = new Intent(Intent.ACTION_CALL);
         callintent.setData(Uri.parse("tel:0725154893"));
         startActivity(callintent);
         loadURL();
-        Boolean stop = false;
-        String stopstring = null;
-        while(stop == false){
 
-            if(stopstring.equals("time")){
-                stop = true;
-            }
-            stopstring = getHttp();
+        String urlTime = "";
+
+        while(!urlTime.contains("time")){
+
+            //urlTime = getURLString();
+
+            URLConnect timestring = new URLConnect();
+
+            timestring.execute();
+
             try {
                 Thread.sleep(5000);
+                urlTime = "time;25000";
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        String time = stopstring.split(";")[1];
-        int timeInt = Integer.parseInt(time);
+        urlTime = urlTime.split(";")[1];
+        int timeInt = Integer.parseInt(urlTime);
             if(timerStarted == false) {
 
                 tv3.setVisibility(View.VISIBLE);
@@ -448,9 +470,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String telenum = telemamanger.getLine1Number();
-        if(telenum.contains("+")){
-            telenum.replace("+","00");
-        }
+
+        telenum = telenum.replace("+","00");
+
         return telenum;
     }
 
@@ -459,8 +481,8 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         Location locat = getCords();
 
         WebView webview = new WebView(MainActivity.this);
-        webview.loadUrl("http://gg.gustav-nordlander.se/?coord=coord;"+telenum+";" +
-                Double.toString(locat.getLongitude())+", "+Double.toString(locat.getLatitude()));
+        webview.loadUrl("http://gg.gustav-nordlander.se/?coord=coord;" + telenum + ";" +
+                Double.toString(locat.getLongitude()) + ", " + Double.toString(locat.getLatitude()));
 
         webview.setWebViewClient(new WebViewClient() {
             @Override
@@ -477,9 +499,24 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     }
 
+    public String getURLString() throws IOException {
+
+        URL uri = new URL("http://gg.gustav-nordlander.se/");
+        URLConnection ec = uri.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(ec.getInputStream(), "UTF-8"));
+        String inputLine;
+        StringBuilder a = new StringBuilder();
+        while ((inputLine = in.readLine()) != null)
+            a.append(inputLine);
+        in.close();
+
+        return a.toString();
+
+    }
+
     public String getHttp(){
 
-        String httpstring = null;
+        String httpstring = "";
         try {
             Location ls = getCords();
             String cords = ls.getLongitude() + ",%20" + ls.getLatitude();
