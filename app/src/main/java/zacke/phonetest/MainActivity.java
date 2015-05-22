@@ -451,7 +451,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String telenum = telemamanger.getLine1Number();
-        telenum.replace("+", "");
+        telenum = telenum.replace("+", "");
         return telenum;
     }
 
