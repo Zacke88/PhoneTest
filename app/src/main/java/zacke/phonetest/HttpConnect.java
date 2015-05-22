@@ -8,12 +8,15 @@ import android.util.Log;
 import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URI;
+
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 
-public class HttpConnect extends AsyncTask<String, String, String>{
+public class HttpConnect extends AsyncTask<Void, String, String>{
 
     private TextView tv2;
     public AsyncResponse listener=null;
@@ -21,19 +24,17 @@ public class HttpConnect extends AsyncTask<String, String, String>{
 
     @Override
     protected void onPostExecute(String result) {
-        if(listener != null){
             listener.processFinish(result);
-        }
     }
 
     @Override
-    protected String doInBackground(String ... params){
+    protected String doInBackground(Void ... params){
         String i = "";
 
         String returned;
         try {
-            i = getInternetData(params[0], params[1]);
-            //System.out.println(i);
+            i = getInternetData();
+            System.out.println("i = " + i);
         } catch(Exception e) {
             Log.e("TAG",Log.getStackTraceString(e));
             i = "le fail2";
@@ -42,24 +43,26 @@ public class HttpConnect extends AsyncTask<String, String, String>{
         return i;
     }
 
-    public String getInternetData(String cords, String phoneNr) throws Exception {
+    public String getInternetData() throws Exception {
         BufferedReader in = null;
         String data = "";
 
         try {
-            DefaultHttpClient httpClient;
-            HttpGet httpget;
-            httpClient = new DefaultHttpClient();
-            //String restUrl = URLEncoder.encode("http://gg.gustav-nordlander.se/?coord=" + cords + ";" + phoneNr, "UTF-8");
-            //httpget = new HttpGet(restUrl);
-            //httpget = new HttpGet("http://gg.gustav-nordlander.se/?coord=" + cords + ";" + phoneNr);
-            httpget = new HttpGet("http://gg.gustav-nordlander.se");
-            HttpResponse httpResponse = httpClient.execute(httpget);
+            HttpClient client = new DefaultHttpClient();
+            URI website = new URI("http://gg.gustav-nordlander.se");
+            HttpGet request = new HttpGet();
+            request.setURI(website);
+            HttpResponse response = client.execute(request);
+            response.getStatusLine().getStatusCode();
 
-            in = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
             StringBuffer sb = new StringBuffer("");
             String l = "";
             String nl = System.getProperty("line.separator");
+            //String restUrl = URLEncoder.encode("http://gg.gustav-nordlander.se/?coord=" + cords + ";" + phoneNr, "UTF-8");
+            //httpget = new HttpGet(restUrl);
+            //httpget = new HttpGet("http://gg.gustav-nordlander.se/?coord=" + cords + ";" + phoneNr);
+
             while((l = in.readLine()) != null) {
                 sb.append(l + nl);
             }

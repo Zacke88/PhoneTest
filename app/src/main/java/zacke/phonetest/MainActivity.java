@@ -55,6 +55,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
     private boolean hasStoredVar;
     private boolean hasNum = false;
 
+
     public void processFinish(String output){
         //this you will received result fired from async class of onPostExecute(result) method.
         tv2 = (TextView)findViewById(R.id.textView2);
@@ -67,6 +68,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        System.out.println("started");
         //get Your Current Location
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
@@ -219,7 +221,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public void embuttonOnClick(View v) {
     // do something when the button is clicked
-
+        System.out.println("em click");
         tv2 = (TextView)findViewById(R.id.textView2);
         tv3 = (TextView)findViewById(R.id.textView3);
 
@@ -429,31 +431,27 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public void doEm() throws IOException {
 
-        Intent callintent = new Intent(Intent.ACTION_CALL);
+        /*Intent callintent = new Intent(Intent.ACTION_CALL);
         callintent.setData(Uri.parse("tel:0725154893"));
-        startActivity(callintent);
+        startActivity(callintent);*/
         loadURL();
 
-        String urlTime = "";
+        HttpGetThread Httpgetter = new HttpGetThread(this);
+        Thread theThread = new Thread(Httpgetter);
+        theThread.start();
+        System.out.println("After run");
+        /*String timeString= "";
 
-        while(!urlTime.contains("time")){
+        while(!timeString.contains("time")){
 
             //urlTime = getURLString();
 
-            URLConnect timestring = new URLConnect();
+           timeString = getHttp();
 
-            timestring.execute();
-
-            try {
-                Thread.sleep(5000);
-                urlTime = "time;25000";
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
-        urlTime = urlTime.split(";")[1];
-        int timeInt = Integer.parseInt(urlTime);
+        tv2.setText("after time loop");
+        timeString = timeString.split(";")[1];
+        int timeInt = Integer.parseInt(timeString);
             if(timerStarted == false) {
 
                 tv3.setVisibility(View.VISIBLE);
@@ -462,7 +460,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                 timer.start();
                 timerStarted = true;
             }
-
+*/
 
     }
 
@@ -470,8 +468,6 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String telenum = telemamanger.getLine1Number();
-
-        telenum = telenum.replace("+","00");
 
         return telenum;
     }
@@ -482,7 +478,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         WebView webview = new WebView(MainActivity.this);
         webview.loadUrl("http://gg.gustav-nordlander.se/?coord=coord;" + telenum + ";" +
-                Double.toString(locat.getLongitude()) + ", " + Double.toString(locat.getLatitude()));
+                Double.toString(locat.getLatitude())  + "," + Double.toString(locat.getLongitude()));
 
         webview.setWebViewClient(new WebViewClient() {
             @Override
@@ -518,12 +514,10 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         String httpstring = "";
         try {
-            Location ls = getCords();
-            String cords = ls.getLongitude() + ",%20" + ls.getLatitude();
             HttpConnect test = new HttpConnect();
             test.listener = this;
-            test.execute(cords,telenum);
-            test.listener.processFinish(httpstring);
+            test.execute();
+            processFinish(httpstring);
         } catch(Exception e) {
             tv2.setText("Le fail1");
         }
