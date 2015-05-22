@@ -50,7 +50,7 @@ public class HttpGetThread extends Activity implements Runnable {
                 urlTime=urlTime.split(";")[1];
                 int timeInt = Integer.parseInt(urlTime);
                 final CounterClass timer = new CounterClass(timeInt, 1000);
-                tv3.setVisibility(View.VISIBLE);
+
                 //final CounterClass timer = new CounterClass(1200000, 1000);
 
                 timer.start();
