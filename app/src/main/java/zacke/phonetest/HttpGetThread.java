@@ -27,7 +27,6 @@ public class HttpGetThread extends Activity implements Runnable {
 
     public void run() {
 
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

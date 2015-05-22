@@ -507,7 +507,6 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         in.close();
 
         return a.toString();
-
     }
 
     public String getHttp(){
