@@ -31,7 +31,7 @@ public class HttpGetThread extends Activity implements Runnable {
             @Override
             public void run() {
 
-                tv3.setText("Waiting for ETA");
+
                 String urlTime = "";
                 while(!urlTime.contains("time")) {
                     try {
@@ -83,8 +83,6 @@ public class HttpGetThread extends Activity implements Runnable {
         @Override
         public void onFinish() {
             // TODO Auto-generated method stub
-            tv3.setText("");
-            tv3.setText("Completed");
         }
     }
 

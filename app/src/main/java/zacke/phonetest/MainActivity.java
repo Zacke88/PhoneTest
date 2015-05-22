@@ -431,36 +431,16 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public void doEm() throws IOException {
 
-        /*Intent callintent = new Intent(Intent.ACTION_CALL);
+        Intent callintent = new Intent(Intent.ACTION_CALL);
         callintent.setData(Uri.parse("tel:0725154893"));
-        startActivity(callintent);*/
+        startActivity(callintent);
         loadURL();
+        tv3.setText("Waiting for ETA");
 
         HttpGetThread Httpgetter = new HttpGetThread(this);
         Thread theThread = new Thread(Httpgetter);
         theThread.start();
         System.out.println("After run");
-        /*String timeString= "";
-
-        while(!timeString.contains("time")){
-
-            //urlTime = getURLString();
-
-           timeString = getHttp();
-
-        }
-        tv2.setText("after time loop");
-        timeString = timeString.split(";")[1];
-        int timeInt = Integer.parseInt(timeString);
-            if(timerStarted == false) {
-
-                tv3.setVisibility(View.VISIBLE);
-                //final CounterClass timer = new CounterClass(1200000, 1000);
-                final CounterClass timer = new CounterClass(timeInt, 1000);
-                timer.start();
-                timerStarted = true;
-            }
-*/
 
     }
 
@@ -468,7 +448,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String telenum = telemamanger.getLine1Number();
-
+        telenum.replace("+", "");
         return telenum;
     }
 
