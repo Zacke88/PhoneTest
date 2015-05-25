@@ -431,10 +431,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public void doEm() throws IOException {
 
-
-        Intent callintent = new Intent(Intent.ACTION_CALL);
-        callintent.setData(Uri.parse("tel:0725154893"));
-        startActivity(callintent);
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:0725154893"));
+        startActivity(callIntent);
         loadURL();
         tv3.setText("Waiting for ETA");
         tv3.setVisibility(View.VISIBLE);
@@ -504,32 +503,5 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             tv2.setText("Le fail1");
         }
         return httpstring;
-    }
-
-    public class CounterClass extends CountDownTimer {
-
-        public CounterClass(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-            // TODO Auto-generated constructor stub
-        }
-        @Override
-        public void onTick(long millisUntilFinished) {
-            // TODO Auto-generated method stub
-
-
-            tv3 = (TextView)findViewById(R.id.textView3);
-            long millis = millisUntilFinished;
-            String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-                    TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-            tv3.setText("ETA: " + hms);
-        }
-
-        @Override
-        public void onFinish() {
-            // TODO Auto-generated method stub
-            tv3.setText("");
-            tv3.setText("Completed");
-        }
     }
 }
