@@ -30,27 +30,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.api.client.util.IOUtils;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.concurrent.TimeUnit;
+
 
 
 public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     private LocationManager locationManager;
     private MyCurrentLocationListener locationListener;
-    private String ls;
     private String emergencyNumber = "112";
-    private CountDownTimer countDownTimer;
     private TextView tv2;
     private TextView tv3;
-    private boolean timerStarted = false;
     private String telenum;
     private boolean hasStoredVar;
     private boolean hasNum = false;
@@ -84,7 +74,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             hasNum = true;
         }
         else{
-            if(hasStoredVar == false)
+            if(!hasStoredVar)
             {
                 Toast.makeText(getApplicationContext(), "Could not find phone number, you can input it in settings", Toast.LENGTH_LONG).show();
             }
@@ -111,12 +101,10 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
 
         if(telenum == null){
-            final String maintext = new String("Current number is: (Could not find number)");
-            alert.setMessage(maintext);
+            alert.setMessage("Current number is: (Could not find number)");
         }
         else{
-            final String maintext = new String("Current number is: " + telenum);
-            alert.setMessage(maintext);
+            alert.setMessage("Current number is: " + telenum);
         }
         alert.setTitle("Enter 10 digits phone number");
         input.setId(R.id.phonenrdialog);
@@ -153,7 +141,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                     public void onClick(View view) {
 
 
-                            boolean theBool = false;
+                            boolean theBool;
                             theBool = input.getText().toString().length() == 10;
                             if (theBool) {
                                 {
@@ -182,12 +170,11 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
 
-                    boolean theBool = false;
-                    Editable value = input.getText();
+                    boolean theBool;
 
                     theBool = input.getText().toString().length() == 10;
                     if (theBool){
-                        if (hasNum == false) {
+                        if (!hasNum) {
                             telenum = input.getText().toString();
                             SharedPreferences mPrefs = getSharedPreferences("LAGG", Context.MODE_PRIVATE);
                             SharedPreferences.Editor mEditor = mPrefs.edit();
@@ -239,8 +226,6 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public void mapButtonOnClick(View v) {
         Location l = getCords();
-        double latitude = l.getLatitude();
-        double longitude = l.getLongitude();
 
         Intent i = new Intent(MainActivity.this, MapsActivity.class);
         Bundle b = new Bundle();
@@ -266,7 +251,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         switch (id) {
 
             case R.id.action_settings:
-                if (hasNum == false) {
+                if (!hasNum) {
                     enterPhonenr();
                 }
                 else{
@@ -292,9 +277,8 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
     public Location getCords() throws NullPointerException{
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        return l;
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
     public AlertDialog createAlert(View v){
@@ -336,8 +320,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                     @Override
                     public void onClick(View view) {
 
-                        boolean theBool = false;
-                        Editable value = input.getText();
+                        boolean theBool;
                         theBool = OKButton(input.getText().toString());
 
                         if (theBool){
@@ -377,8 +360,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
 
-                    boolean theBool = false;
-                    Editable value = input.getText();
+                    boolean theBool;
 
                     theBool = OKButton(input.getText().toString());
                     if (theBool){
@@ -475,31 +457,4 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         }
     }
 
- /*   public String getURLString() throws IOException {
-
-        URL uri = new URL("http://gg.gustav-nordlander.se/");
-        URLConnection ec = uri.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(ec.getInputStream(), "UTF-8"));
-        String inputLine;
-        StringBuilder a = new StringBuilder();
-        while ((inputLine = in.readLine()) != null)
-            a.append(inputLine);
-        in.close();
-
-        return a.toString();
-    }*/
-
-   /* public String getHttp(){
-
-        String httpString = "";
-        try {
-            HttpConnect test = new HttpConnect();
-            test.listener = this;
-            test.execute();
-            processFinish(httpString);
-        } catch(Exception e) {
-            tv2.setText("Le fail1");
-        }
-        return httpString;
-    }*/
 }

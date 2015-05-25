@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -87,19 +86,8 @@ public class MapsActivity extends FragmentActivity {
         // Get the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
 
-        // Get Current Location
-        Location myLocation = locationManager.getLastKnownLocation(provider);
-
         // set map type
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        /*// Get latitude of the current location
-        double latitude = myLocation.getLatitude();
-
-        // Get longitude of the current location
-        double longitude = myLocation.getLongitude();
-*/
-
 
         // Create a LatLng object for the current location
         LatLng latLng = new LatLng(latitude, longitude);

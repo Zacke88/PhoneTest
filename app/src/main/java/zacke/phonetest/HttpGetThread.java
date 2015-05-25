@@ -3,8 +3,6 @@ package zacke.phonetest;
 import android.app.Activity;
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import java.util.concurrent.ExecutionException;
@@ -16,12 +14,9 @@ import java.util.concurrent.TimeUnit;
 public class HttpGetThread extends Activity implements Runnable {
 
     private TextView tv3;
-    private TextView tv2;
-    private boolean timerStarted = false;
 
     HttpGetThread(Context context) {
         tv3 = (TextView) ((Activity) context).findViewById(R.id.textView3);
-        tv2 = (TextView) ((Activity) context).findViewById(R.id.textView2);
     }
 
     public void run() {
@@ -49,7 +44,6 @@ public class HttpGetThread extends Activity implements Runnable {
 
                 final CounterClass timer = new CounterClass(timeInt, 1000);
                 timer.start();
-
             }
         });
     }
@@ -61,10 +55,9 @@ public class HttpGetThread extends Activity implements Runnable {
             // TODO Auto-generated constructor stub
         }
         @Override
-        public void onTick(long millisUntilFinished) {
+        public void onTick(long millis) {
             // TODO Auto-generated method stub
 
-            long millis = millisUntilFinished;
             String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
                     TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                     TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
@@ -79,56 +72,3 @@ public class HttpGetThread extends Activity implements Runnable {
         }
     }
 }
-        
-/*    public void run(){
-
-        String timeString= "";
-
-        while(!timeString.contains("time")){
-
-            timeString = getHttp();
-            System.out.println("Getted");
-            System.out.println("timestring: " + timeString);
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-        String intString = timeString.split(";")[1];
-        int timeInt = Integer.parseInt(intString);
-        if(timerStarted == false) {
-
-            tv3.setVisibility(View.VISIBLE);
-            //final CounterClass timer = new CounterClass(1200000, 1000);
-            final CounterClass timer = new CounterClass(timeInt, 1000);
-            timer.start();
-            timerStarted = true;
-        }
-    }
-
-
-    public void processFinish(String output){
-        //this you will received result fired from async class of onPostExecute(result) method.
-        if(output != null) {
-            tv2.setText(output);
-        }
-    }
-
-
-    public String getHttp(){
-
-        String httpstring = "";
-        try {
-            HttpConnect test = new HttpConnect();
-            test.listener = this;
-            httpstring = test.execute().get();
-            //processFinish();
-        } catch(Exception e) {
-            tv2.setText("Le fail1");
-        }
-        return httpstring;
-    }*/
-
-
