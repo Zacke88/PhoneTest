@@ -27,8 +27,6 @@ public class HttpGetThread extends Activity implements Runnable {
                         Thread.sleep(5000);
                         URLConnect timeString = new URLConnect();
                         urlTime = timeString.execute().get();
-                        System.out.println("Tråd loop");
-
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
