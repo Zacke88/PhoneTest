@@ -73,8 +73,6 @@ public class MapsActivity extends FragmentActivity {
         longitude = b.getDouble("Longitude");
         latitude = b.getDouble("Latitude");
 
-     //   mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Marker").snippet("Snippet"));
-
         // Enable MyLocation Layer of Google Map
         mMap.setMyLocationEnabled(true);
         // Get LocationManager object from System Service LOCATION_SERVICE
@@ -95,10 +93,9 @@ public class MapsActivity extends FragmentActivity {
         // Show the current location in Google Map
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-        Toast.makeText(getApplicationContext(), latitude + " " + longitude, Toast.LENGTH_LONG).show();
         // Zoom in the Google Map
        // mMap.animateCamera(CameraUpdateFactory.zoomTo(6));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet("Consider yourself located"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet("You're located!"));
 
     }
 }
