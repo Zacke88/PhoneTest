@@ -31,4 +31,6 @@ dependencies {
     compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
     compile 'com.google.apis:google-api-services-oauth2:v1-rev93-1.20.0'
     compile 'com.google.api-client:google-api-client:1.18.0-rc'
+    compile 'org.apache.httpcomponents:httpclient:4.0-alpha4'
+
 }

@@ -38,6 +38,7 @@ public class HttpGetThread extends Activity implements Runnable {
                         Thread.sleep(5000);
                         URLConnect timeString = new URLConnect();
                         urlTime = timeString.execute("http://gg.gustav-nordlander.se").get();
+                        System.out.println("Tråd loop");
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -45,13 +46,12 @@ public class HttpGetThread extends Activity implements Runnable {
                         e.printStackTrace();
                     }
                 }
-                Log.e("TAG", urlTime);
+                System.out.println("Efter loop");
 
                 urlTime=urlTime.split(";")[1];
                 int timeInt = Integer.parseInt(urlTime);
                 final CounterClass timer = new CounterClass(timeInt, 1000);
 
-                //final CounterClass timer = new CounterClass(1200000, 1000);
 
                 timer.start();
 
@@ -78,6 +78,7 @@ public class HttpGetThread extends Activity implements Runnable {
                     TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                     TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
             tv3.setText("ETA: " + hms);
+            System.out.println("Timer: " + hms);
         }
 
         @Override
