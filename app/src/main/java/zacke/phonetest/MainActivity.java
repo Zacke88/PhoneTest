@@ -54,6 +54,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
     private String telenum;
     private boolean hasStoredVar;
     private boolean hasNum = false;
+    private Location l;
 
 
     public void processFinish(String output){
@@ -226,9 +227,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         tv3 = (TextView)findViewById(R.id.textView3);
 
         try {
-            Location l = getCords();
-//            tv2.setText("Your location is: \n" +
-//                    " Latitude = " + l.getLatitude() + " Longitude = " + l.getLongitude());
+            l = getCords();
         }catch (NullPointerException e){
             Toast.makeText(getApplicationContext(), "Could not determinate location", Toast.LENGTH_LONG).show();
         }
@@ -236,11 +235,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         AlertDialog ad = createAlert(v);
         showAlert(ad);
 
-
-
     }
 
-    public void mapbuttonOnClick(View v) {
+    public void mapButtonOnClick(View v) {
         Location l = getCords();
         double latitude = l.getLatitude();
         double longitude = l.getLongitude();
@@ -302,8 +299,10 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
 
     public AlertDialog createAlert(View v){
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this,android.R.style.Theme_Black);
+        int maxLength = 3;
         final EditText input = new EditText(this);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this,android.R.style.Theme_Black);
         alert.setTitle("Emergency number");
         input.setId(R.id.emdialog);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -311,7 +310,7 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         input.setTextColor(Color.WHITE);
         input.setTextSize(TypedValue.COMPLEX_UNIT_SP,140);
         input.setSingleLine(true);
-        int maxLength = 3;
+
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
 
         alert.setNegativeButton("Ok", null);
@@ -349,10 +348,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                             //Dismiss once everything is OK.
 
-
                             if(getCords() != null){
-                                Button mapbutton = (Button) findViewById(R.id.mapbutton);
-                                mapbutton.setVisibility(View.VISIBLE);
+                                Button mapButton = (Button) findViewById(R.id.mapbutton);
+                                mapButton.setVisibility(View.VISIBLE);
                             }
                             else{
                                 tv2.setText("Location could not be determined, location have not been sent to emergencycentral");
@@ -391,10 +389,9 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
                         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                         //Dismiss once everything is OK.
 
-
                         if(getCords() != null){
-                            Button mapbutton = (Button) findViewById(R.id.mapbutton);
-                            mapbutton.setVisibility(View.VISIBLE);
+                            Button mapButton = (Button) findViewById(R.id.mapbutton);
+                            mapButton.setVisibility(View.VISIBLE);
                         }
                         else{
                             tv2.setText("Location could not be determined, location have not been sent to emergencycentral");
@@ -449,35 +446,36 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
     public String getPhonenr(){
 
         TelephonyManager telemamanger = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        String telenum = telemamanger.getLine1Number();
-        telenum = telenum.replace("+", "");
-        return telenum;
+        String teleNum = telemamanger.getLine1Number();
+        teleNum = teleNum.replace("+", "");
+        return teleNum;
     }
 
     public void loadURL()   {
 
-        Location locat = getCords();
+        try {
+            WebView webview = new WebView(MainActivity.this);
+            webview.loadUrl("http://gg.gustav-nordlander.se/?coord=coord;" + telenum + ";" +
+                    Double.toString(l.getLatitude()) + "," + Double.toString(l.getLongitude()));
 
-        WebView webview = new WebView(MainActivity.this);
-        webview.loadUrl("http://gg.gustav-nordlander.se/?coord=coord;" + telenum + ";" +
-                Double.toString(locat.getLatitude())  + "," + Double.toString(locat.getLongitude()));
+            webview.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    view.loadUrl(url);
+                    return false;
+                }
 
-        webview.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return false;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-            }
-        });
-
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                }
+            });
+        }   catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public String getURLString() throws IOException {
+ /*   public String getURLString() throws IOException {
 
         URL uri = new URL("http://gg.gustav-nordlander.se/");
         URLConnection ec = uri.openConnection();
@@ -489,19 +487,19 @@ public class MainActivity  extends ActionBarActivity implements AsyncResponse{
         in.close();
 
         return a.toString();
-    }
+    }*/
 
-    public String getHttp(){
+   /* public String getHttp(){
 
-        String httpstring = "";
+        String httpString = "";
         try {
             HttpConnect test = new HttpConnect();
             test.listener = this;
             test.execute();
-            processFinish(httpstring);
+            processFinish(httpString);
         } catch(Exception e) {
             tv2.setText("Le fail1");
         }
-        return httpstring;
-    }
+        return httpString;
+    }*/
 }

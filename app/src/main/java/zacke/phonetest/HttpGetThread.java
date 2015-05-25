@@ -24,20 +24,14 @@ public class HttpGetThread extends Activity implements Runnable {
         tv2 = (TextView) ((Activity) context).findViewById(R.id.textView2);
     }
 
-
     public void run() {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-
-                String urlTime = "";
+        String urlTime = "";
                 while(!urlTime.contains("time")) {
                     try {
                         Thread.sleep(5000);
                         URLConnect timeString = new URLConnect();
-                        urlTime = timeString.execute("http://gg.gustav-nordlander.se").get();
+                        urlTime = timeString.execute().get();
                         System.out.println("Tråd loop");
 
                     } catch (InterruptedException e) {
@@ -46,22 +40,19 @@ public class HttpGetThread extends Activity implements Runnable {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("Efter loop");
+        urlTime=urlTime.split(";")[1];
+        final int timeInt = Integer.parseInt(urlTime);
 
-                urlTime=urlTime.split(";")[1];
-                int timeInt = Integer.parseInt(urlTime);
+        runOnUiThread(new Runnable()  {
+            @Override
+            public void run() {
+
                 final CounterClass timer = new CounterClass(timeInt, 1000);
-
-
                 timer.start();
 
             }
         });
-
     }
-
-
-
 
     public class CounterClass extends CountDownTimer {
 
@@ -87,13 +78,8 @@ public class HttpGetThread extends Activity implements Runnable {
             tv3.setText("Ambulance should arrive shortly");
         }
     }
-
-
-
 }
         
-
-
 /*    public void run(){
 
         String timeString= "";
